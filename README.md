@@ -10,12 +10,28 @@ Community information hub for the Radxa Cubie A7S single-board computer (Allwinn
 |-------|-------------|
 | [Dev-Stand with NVMe](3d-prints/dev-stand-nvme/) | Open bench stand that holds the board flat with a Waveshare M.2 NVMe adapter, a rear 40x10 mm fan, an SMA antenna hole, and a pass-through for the 30-pin GPIO header |
 
-Hardware reference and guides will be added under their own folders.
+### Documentation
+
+| Doc | Description |
+|-----|-------------|
+| [FEL on the A733](bringup/fel-a733.md) | Board-verified FEL bring-up reference: SoC ID, SRAM map, soc_info entry, cheat sheet, gotchas, and the xHCI bulk fix |
+
+Hardware reference and more bring-up notes will be added under their own folders.
+
+## Status and open work
+
+See [ROADMAP.md](ROADMAP.md) for what is done, what is in progress, and where
+help is wanted. The overall goal is a fully open, blob-free, shippable stack.
 
 ## License
 
-Content is released under [CC BY 4.0](LICENSE). Use it, print it, remix it, share it, commercial use included. Attribution appreciated.
+Content is released under [CC BY 4.0](LICENSE), an open license for everyone.
+Use it, print it, remix it, share it, commercial use included. The only
+condition is attribution.
 
 ## Contributing
 
-Contributions are welcome. Board owners, printers, and tinkerers: open an issue or a pull request with fixes, additions, remixes, or notes.
+Pull requests are welcome. Board owners, printers, and tinkerers: open an
+issue or a [pull request](https://github.com/DockSeed/Radxa-Cubie-A7s/pulls)
+with fixes, additions, remixes, or notes. The [roadmap](ROADMAP.md) lists the
+spots where help is wanted most.
