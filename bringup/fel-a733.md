@@ -139,9 +139,39 @@ Build a trivial bare-metal SPL (UART output or a memcopy) and run it with
 dump, open DRAM init, and everything else that depends on running code rather
 than reads on this SoC.
 
+## Two FEL entry modes
+
+There are two different ways the A733 ends up in FEL, and they are not the
+same environment:
+
+1. Raw BROM FEL. Remove the SD card, or hold the boot button while applying
+   power. The BROM enters FEL before boot0 runs, so the DRAM is not trained
+   and only SRAM is available. This is the mode used for the SRAM work, the
+   exec chain, and open DRAM init experiments in this document.
+2. boot0 then FEL. Let the vendor boot0 run and train the DRAM, then drop
+   into FEL (on dlan's setup, by pressing "2" on the serial console during
+   boot). Here the DRAM is already up, which is what you want when loading a
+   full mainline U-Boot image over FEL.
+
+Pick the mode by what you need: raw BROM FEL for low level and DRAM work,
+boot0 then FEL for loading a large U-Boot that expects working DRAM.
+
+## Relation to the mainline U-Boot boot recipe
+
+Yixun Lan (dlan) documents how to build and run mainline U-Boot on the A733
+over FEL, using TF-A (`PLAT=sun60i_a733`) and relying on the vendor boot0 for
+DDR init. See `github.com/dlan17/a733` (`boot-fel.md`). That recipe and this
+document are complementary: this one covers the low level FEL mechanics and
+the open DRAM angle, the recipe covers the full mainline boot chain.
+
+Board note: dlan targets the Radxa Cubie A7A (`radxa-cubie-a7a_defconfig`).
+The Cubie A7S uses the same A733 SoC but is a different board.
+
 ## Upstream pointers
 
 - `linux-sunxi/sunxi-tools` PR #223 adds the A733 soc_info and a uart-hello
   example. It does not include DRAM init. Open A733 DRAM training is still
   the missing piece.
 - The xHCI bounce buffer fix above is a separate upstream candidate.
+- Mainline U-Boot A733 support is being upstreamed by Yixun Lan (dlan). See the
+  sunxi U-Boot patchwork list for the current series.

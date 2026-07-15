@@ -1,41 +1,69 @@
 # Roadmap and open work
 
-Status of the open Radxa Cubie A7S (Allwinner A733) bring-up. The overall
-goal is a fully open, blob-free, shippable software stack. This list is
-honest about what is done, what is in progress, and where help is wanted.
+Status of the open Radxa Cubie A7S (Allwinner A733) bring-up. The board already
+runs a full graphical Linux desktop. The mission is to make that stack fully
+open, blob-free, and shippable.
 
 Legend: [done] [wip] [help wanted]
 
-## Boot chain
+Note on "works today": the current working images boot and run well, but still
+lean on some patched vendor blobs (GPU, DRAM training, and others). Replacing
+those with open code is what the rest of this list is about.
 
-- [done] FEL bring-up characterized and board-verified. See
-  [bringup/fel-a733.md](bringup/fel-a733.md).
-- [done] First FEL code execution proven on the A733 (exec chain works).
+## What works today
+
+- [done] Fedora aarch64 port with a GPU-accelerated LXQt desktop booting on the
+  board. A pioneering distro port for this SoC.
+- [done] GPU bring-up on the open Mesa driver (Imagination powervr), with
+  benchmarks. Stable at a pinned clock (performance governor).
+- [done] Armbian build track for the board.
+- [done] A single kernel base (mainline 6.18.x LTS plus BSP patches) feeding
+  both the Fedora and Armbian tracks.
+- [done] DisplayPort output over the USB-C combo PHY (works on stock too).
+- [done] NVMe over the PCIe FPC link.
+- [done] Gigabit Ethernet.
+- [done] eMMC and SD boot.
+- [done] FEL bring-up characterized and board-verified, including the first
+  proven FEL code execution on the A733. See [bringup/fel-a733.md](bringup/fel-a733.md).
+- [done] Thermal and DVFS behavior characterized.
+
+## In progress
+
+- [wip] GPU DVFS (dynamic clocking). The GPU is stable at pinned clocks, but
+  certain clock points hang it, and part of that is a Mesa driver issue. The
+  thermal cap is real.
+- [wip] Remove the remaining GPU firmware blob dependency so a shippable image
+  is fully blob-free. The open Mesa driver already runs the GPU.
+- [wip] Open NPU path (etnaviv, Teflon) as an alternative to the vendor VIPLite.
+- [wip] eDP output (DisplayPort already works).
+- [wip] Mainline upstreaming of the A733. Clocks, DMA, RTC, and a first device
+  tree are on the lists. Pinctrl is the choke point.
 - [wip] Bulk-transfer fix for `sunxi-fel` on Intel xHCI hosts. Patch written,
   board test pending, then upstream to sunxi-tools.
-- [wip] Trivial bare-metal SPL over `sunxi-fel spl` to prove the full load and
-  run chain end to end.
+- [wip] Hardware reference (rails, DVFS, pinout) to be published here after
+  cleanup. Early findings: rails are not clamped against absolute maximum in
+  the device tree, and more power-on lanes are enabled than needed.
+
+## Help wanted
+
 - [help wanted] Open DRAM init in boot0/SPL to replace the closed vendor
-  libdram blob (LPDDR5). The controller bring-up stalls at config, it looks
-  like the DesignWare umctl2 swctl handshake. Anyone with DesignWare umctl2
-  DDR experience or open Allwinner DRAM init: this is the wall.
-
-## Kernel and drivers
-
-- [wip] Mainline A733 tracking. Clocks, DMA, RTC, and a first DT are on the
-  lists. Pinctrl is the choke point.
+  libdram blob (LPDDR5). Two separate things, do not confuse them:
+  - The board-specific DRAM parameters can be obtained cleanly, without
+    disassembling anything, by reading the documented parameter block in the
+    boot0 image header with `sunxi-fw` (apritzel/sunxi-fw). The vendor boot0
+    also prints its training summary on the serial console.
+  - What does not exist for the A733 is the open init sequence that consumes
+    those parameters. The controller is a DesignWare umctl2 with an LPDDR5
+    PHY, and the bring-up stalls at config, most likely the umctl2 swctl
+    handshake. The old sunxi Kconfig failsafe timings are DDR3 only and do
+    not apply here. Good public references are the umctl2 init in mainline
+    U-Boot for other SoCs (for example STM32MP1) and vendor TRMs that document
+    the same controller.
+  - So parameters are not the solution. The open umctl2 and PHY bring-up code
+    is the actual work. Anyone with DesignWare umctl2 DDR experience or open
+    Allwinner DRAM init on a recent SoC: this is the wall.
 - [help wanted] Ethernet PHY support upstream (MAE0621A) for a clean mainline
   path.
-- [wip] GPU. Display works, but the GPU is capped at 600 MHz and the thermal
-  cap is real. Going the open route (mesa, powervr) for a shippable image.
-- [wip] NPU open path (etnaviv, Teflon).
-- [wip] eDP output (DP over the combo PHY works on stock).
-
-## Hardware documentation
-
-- [wip] Hardware reference (rails, DVFS, pinout). Notable findings so far:
-  rails are not clamped against absolute maximum in the device tree, and more
-  power-on lanes are enabled than needed. To be published here after cleanup.
 
 ## What will not be here
 
