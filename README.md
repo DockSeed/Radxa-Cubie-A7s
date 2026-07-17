@@ -15,8 +15,9 @@ Community information hub for the Radxa Cubie A7S single-board computer (Allwinn
 | Doc | Description |
 |-----|-------------|
 | [FEL on the A733](bringup/fel-a733.md) | Board-verified FEL bring-up reference: SoC ID, SRAM map, soc_info entry, cheat sheet, gotchas, and the xHCI bulk fix |
+| [Hardware reference](hardware/hardware-reference.md) | The A7S as populated: power rails and tree, the permitted DVFS voltage window, straps, pinout, connectors, and board photos. Every claim is traced to datasheet, schematic, or measurement. |
 
-Hardware reference and more bring-up notes will be added under their own folders.
+More bring-up notes will be added under their own folders.
 
 ## Status and open work
 
