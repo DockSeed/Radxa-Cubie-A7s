@@ -26,6 +26,10 @@ those with open code is what the rest of this list is about.
 - [done] FEL bring-up characterized and board-verified, including the first
   proven FEL code execution on the A733. See [bringup/fel-a733.md](bringup/fel-a733.md).
 - [done] Thermal and DVFS behavior characterized.
+- [done] Hardware reference: the A7S as populated - power rails and tree, the
+  permitted DVFS voltage window, straps, pinout, and connectors, with board
+  photos and full datasheet/schematic provenance. See
+  [hardware/hardware-reference.md](hardware/hardware-reference.md).
 
 ## In progress
 
@@ -40,9 +44,6 @@ those with open code is what the rest of this list is about.
   tree are on the lists. Pinctrl is the choke point.
 - [wip] Bulk-transfer fix for `sunxi-fel` on Intel xHCI hosts. Patch written,
   board test pending, then upstream to sunxi-tools.
-- [wip] Hardware reference (rails, DVFS, pinout) to be published here after
-  cleanup. Early findings: rails are not clamped against absolute maximum in
-  the device tree, and more power-on lanes are enabled than needed.
 
 ## Help wanted
 
