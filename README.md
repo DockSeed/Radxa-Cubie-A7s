@@ -2,6 +2,8 @@
 
 Community information hub for the Radxa Cubie A7S single-board computer (Allwinner A733). Hardware notes, documentation, and 3D-printable accessories. Work in progress.
 
+Looking for software? [a7s-build](https://github.com/DockSeed/a7s-build) builds a Debian 13 image for the board from source with one `./build.sh`.
+
 ## Contents
 
 ### 3D prints
