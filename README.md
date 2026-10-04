@@ -23,10 +23,17 @@ More bring-up notes will be added under their own folders.
 
 ## Related projects
 
-Open work on the board by others:
+Open work on the board and the A733 by others:
 
 | Project | Description |
 |---------|-------------|
+| [radxa-build/radxa-a733](https://github.com/radxa-build/radxa-a733) | Radxa's official system images for its A733 boards |
+| [radxa-pkg/u-boot-dlan17](https://github.com/radxa-pkg/u-boot-dlan17) | Radxa's packaging of the A733 boot chain, based on [U-Boot](https://github.com/dlan17/u-boot) and [TF-A](https://github.com/dlan17/trusted-firmware-a) by Yixun Lan |
+| [alexcaoys/allwinner-bsp](https://github.com/alexcaoys/allwinner-bsp/tree/linux-6.18.y) | Radxa's Allwinner BSP drivers ported to Linux 6.18 |
+| [QinCai-rui/allwinner-bsp](https://github.com/QinCai-rui/allwinner-bsp/tree/linux-7.1.y) | The same BSP port carried on to Linux 7.1 |
+| [NickAlilovic/build](https://github.com/NickAlilovic/build/tree/Radxa-mainline-WIP-a7s) | Armbian build for the A7S on top of those drivers, work in progress; discussed in the [Armbian forum](https://forum.armbian.com/topic/56130-radxa-cubie-a7aa7z-allwinner-a733/) |
+| [fuhuasxflwb/allwinner-bsp](https://github.com/fuhuasxflwb/allwinner-bsp) | Fork of NickAlilovic/allwinner-bsp with USB gadget endpoint changes for audio |
+| [chainsx/build](https://github.com/chainsx/build/tree/a733) | Armbian build fork with an early A733 branch for Radxa boards |
 | [a7s-linux-drivers](https://github.com/skitzo2000/a7s-linux-drivers) | Drivers, patches and device-tree overlays for the Armbian 6.18 edge kernel: GMAC, DisplayPort over USB-C, NPU, AXP8191 CPU-rail fix, AIC8800 |
 | [esp32-a7s-fel](https://github.com/skitzo2000/esp32-a7s-fel) | ESP32-S3 firmware that FEL-boots an A7S without boot media and starts an OS from a USB stick |
 
