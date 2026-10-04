@@ -21,6 +21,15 @@ Looking for software? [a7s-build](https://github.com/DockSeed/a7s-build) builds 
 
 More bring-up notes will be added under their own folders.
 
+## Related projects
+
+Open work on the board by others:
+
+| Project | Description |
+|---------|-------------|
+| [a7s-linux-drivers](https://github.com/skitzo2000/a7s-linux-drivers) | Drivers, patches and device-tree overlays for the Armbian 6.18 edge kernel: GMAC, DisplayPort over USB-C, NPU, AXP8191 CPU-rail fix, AIC8800 |
+| [esp32-a7s-fel](https://github.com/skitzo2000/esp32-a7s-fel) | ESP32-S3 firmware that FEL-boots an A7S without boot media and starts an OS from a USB stick |
+
 ## Status and open work
 
 See [ROADMAP.md](ROADMAP.md) for what is done, what is in progress, and where
