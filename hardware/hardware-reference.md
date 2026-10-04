@@ -183,7 +183,7 @@ Software cannot help here. This is the most important part of the inventory:
 | **UFS 3.0** (2-lane) | All UFS high-speed pins unconnected (TX0/1, RX0/1, REFP/REFM, RST-N). Only supply + REXT. Plus the `RTC-VIO` strap set to "Other" instead of "UFS". | p.6, p.8 |
 | **MIPI-DSI, LVDS, RGB** | Bank **PD0-PD9 entirely unrouted**. No display connector. | p.7 |
 | **Parallel-CSI, MIPI-CSI A + C** | Only **MCSIB** is routed. MCSIA (PK0-PK9) and MCSIC (PK20-PK25) unrouted. | p.7, p.10 |
-| **Analog audio** | For audio the DS lists **only digital** interfaces: 5x I2S, 8-ch DMIC, OWA in/out - "digital audio interfaces like I2S, DMIC, and OWA" (DS p.936). **No analog codec / headphone amp is listed anywhere.** And the board fits **no external codec** and has **no audio jack**. -> **No analog audio.** Audio is digital only: I2S0 on a header or over DP. | DS p.1/p.936; schematic (no codec, no jack) |
+| **Analog audio** | For audio the DS lists **only digital** interfaces: 5x I2S, 8-ch DMIC, OWA in/out. **No analog codec / headphone amp is listed anywhere.** And the board fits **no external codec** and has **no audio jack**. -> **No analog audio.** Audio is digital only: I2S0 on a header or over DP. | DS p.1; UM Sec. 1.1, 1.2; schematic (no codec, no jack) |
 | **NAND / SPI-NOR** | Bank PC used for eMMC only; not even selected in the boot strap. | p.6, p.7 |
 | **GPADC / LRADC to the outside** | GPADC0-4 taken by straps, GPADC5/6 unrouted, LRADC0 tied via 10 K to AVCC. **No ADC channels brought out.** | p.6 |
 | **BT-PCM audio** | PCM_CLK/DOUT/DIN/SYNC at the WiFi module -> BT audio only over HCI/USB. | p.11 |

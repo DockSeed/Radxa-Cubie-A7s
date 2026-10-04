@@ -1,47 +1,27 @@
 # Roadmap and open work
 
-Status of the open Radxa Cubie A7S (Allwinner A733) bring-up. The board already
-runs a full graphical Linux desktop. The mission is to make that stack fully
-open, blob-free, and shippable.
+Status of the open Radxa Cubie A7S (Allwinner A733) work. This repository holds
+the hardware side: notes, bring-up references, measurements and 3D prints.
+
+The software moved to [a7s-build](https://github.com/DockSeed/a7s-build): one
+`./build.sh` builds a Debian 13 image for the board from source (boot chain,
+Linux 6.18 with the A733 patch series, root filesystem, optional Xfce desktop).
+What the image offers and where help is wanted is kept there:
+[how-we-built-it.md](https://github.com/DockSeed/a7s-build/blob/main/docs/how-we-built-it.md#what-the-image-offers)
+and [help-wanted.md](https://github.com/DockSeed/a7s-build/blob/main/docs/help-wanted.md).
 
 Legend: [done] [wip] [help wanted]
 
-Note on "works today": the current working images boot and run well, but still
-lean on some patched vendor blobs (GPU, DRAM training, and others). Replacing
-those with open code is what the rest of this list is about.
+## In this repository
 
-## What works today
-
-- [done] Fedora aarch64 port with a GPU-accelerated LXQt desktop booting on the
-  board. A pioneering distro port for this SoC.
-- [done] GPU bring-up on the open Mesa driver (Imagination powervr), with
-  benchmarks. Stable at a pinned clock (performance governor).
-- [done] Armbian build track for the board.
-- [done] A single kernel base (mainline 6.18.x LTS plus BSP patches) feeding
-  both the Fedora and Armbian tracks.
-- [done] DisplayPort output over the USB-C combo PHY (works on stock too).
-- [done] NVMe over the PCIe FPC link.
-- [done] Gigabit Ethernet.
-- [done] eMMC and SD boot.
 - [done] FEL bring-up characterized and board-verified, including the first
   proven FEL code execution on the A733. See [bringup/fel-a733.md](bringup/fel-a733.md).
-- [done] Thermal and DVFS behavior characterized.
 - [done] Hardware reference: the A7S as populated - power rails and tree, the
   permitted DVFS voltage window, straps, pinout, and connectors, with board
   photos and full datasheet/schematic provenance. See
   [hardware/hardware-reference.md](hardware/hardware-reference.md).
-
-## In progress
-
-- [wip] GPU DVFS (dynamic clocking). The GPU is stable at pinned clocks, but
-  certain clock points hang it, and part of that is a Mesa driver issue. The
-  thermal cap is real.
-- [wip] Remove the remaining GPU firmware blob dependency so a shippable image
-  is fully blob-free. The open Mesa driver already runs the GPU.
-- [wip] Open NPU path (etnaviv, Teflon) as an alternative to the vendor VIPLite.
-- [wip] eDP output (DisplayPort already works).
-- [wip] Mainline upstreaming of the A733. Clocks, DMA, RTC, and a first device
-  tree are on the lists. Pinctrl is the choke point.
+- [done] Dev stand with NVMe adapter and fan, 3D-printable. See
+  [3d-prints/dev-stand-nvme](3d-prints/dev-stand-nvme/).
 - [wip] Bulk-transfer fix for `sunxi-fel` on Intel xHCI hosts. Patch written,
   board test pending, then upstream to sunxi-tools.
 
