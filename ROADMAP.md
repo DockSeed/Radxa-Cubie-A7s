@@ -5,12 +5,16 @@ the hardware side: notes, bring-up references, measurements and 3D prints.
 
 The software moved to [a7s-build](https://github.com/DockSeed/a7s-build): one
 `./build.sh` builds a Debian 13 image for the board from source (boot chain,
-Linux 6.18 with the A733 patch series, root filesystem, optional Xfce desktop).
-What the image offers and where help is wanted is kept there:
+kernel, root filesystem, optional Xfce desktop). It pins two recipes of their
+own: [a7s-linux-lts](https://github.com/DockSeed/a7s-linux-lts) (Linux 6.18 LTS
+with the A733 patch series; releases as Debian packages, without the AIC8800
+WLAN/BT driver, which the image builds) and [a733-bootchain](https://github.com/DockSeed/a733-bootchain)
+(U-Boot SPL, TF-A BL31, U-Boot). What the image offers and where help is
+wanted is kept there:
 [how-we-built-it.md](https://github.com/DockSeed/a7s-build/blob/main/docs/how-we-built-it.md#what-the-image-offers)
 and [help-wanted.md](https://github.com/DockSeed/a7s-build/blob/main/docs/help-wanted.md).
 
-Legend: [done] [wip] [help wanted]
+Legend: [done] [parked] [help wanted]
 
 ## In this repository
 
@@ -22,8 +26,8 @@ Legend: [done] [wip] [help wanted]
   [hardware/hardware-reference.md](hardware/hardware-reference.md).
 - [done] Dev stand with NVMe adapter and fan, 3D-printable. See
   [3d-prints/dev-stand-nvme](3d-prints/dev-stand-nvme/).
-- [wip] Bulk-transfer fix for `sunxi-fel` on Intel xHCI hosts. Patch written,
-  board test pending, then upstream to sunxi-tools.
+- [parked] Bulk-transfer fix for `sunxi-fel` on Intel xHCI hosts. Patch
+  written, not yet tested on a board; after that, upstream to sunxi-tools.
 
 ## Help wanted
 
