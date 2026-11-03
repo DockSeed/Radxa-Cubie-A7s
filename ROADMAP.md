@@ -13,6 +13,8 @@ WLAN/BT driver, which the image builds) and [a733-bootchain](https://github.com/
 wanted is kept there:
 [how-we-built-it.md](https://github.com/DockSeed/a7s-build/blob/main/docs/how-we-built-it.md#what-the-image-offers)
 and [help-wanted.md](https://github.com/DockSeed/a7s-build/blob/main/docs/help-wanted.md).
+The A733 patches on mainline Linux 7.3 (kernel only, no releases) are in
+[a7s-linux-mainline](https://github.com/DockSeed/a7s-linux-mainline).
 
 Legend: [done] [parked] [help wanted]
 
