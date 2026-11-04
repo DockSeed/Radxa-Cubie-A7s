@@ -1,6 +1,6 @@
 # Radxa Cubie A7S
 
-Community information hub for the Radxa Cubie A7S single-board computer (Allwinner A733). Hardware notes, documentation, and 3D-printable accessories. Work in progress.
+Community information hub for the Radxa Cubie A7S single-board computer (Allwinner A733). Hardware notes, documentation, and 3D-printable accessories. Work in progress. Unofficial; not affiliated with or authorized by Radxa or Allwinner.
 
 Looking for software? [a7s-build](https://github.com/DockSeed/a7s-build) builds a Debian 13 image for the board from source with one `./build.sh`. Its kernel, [a7s-linux-lts](https://github.com/DockSeed/a7s-linux-lts), and its boot chain, [a733-bootchain](https://github.com/DockSeed/a733-bootchain), are recipes of their own that a7s-build pins. On a board running an a7s-build image, `sudo a7s-kernel-update` installs kernel releases. To try the patches on mainline Linux 7.3, see [a7s-linux-mainline](https://github.com/DockSeed/a7s-linux-mainline).
 
