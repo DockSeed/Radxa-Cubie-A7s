@@ -134,10 +134,11 @@ recipe used by the sunxi-tools uart-hello example.
 
 ## Next step
 
-Build a trivial bare-metal SPL (UART output or a memcopy) and run it with
-`sunxi-fel spl` to prove the full exec chain end to end. That unlocks BROM
-dump, open DRAM init, and everything else that depends on running code rather
-than reads on this SoC.
+[DockSeed/a733-bootchain](https://github.com/DockSeed/a733-bootchain) builds
+the SPL from source (U-Boot SPL, TF-A BL31, U-Boot). Next: run the
+a733-bootchain SPL with `sunxi-fel spl` (needs the PR #223 soc_info) to test
+the exec chain end to end; a BROM dump and open DRAM init still need a helper
+SPL of their own.
 
 ## Two FEL entry modes
 

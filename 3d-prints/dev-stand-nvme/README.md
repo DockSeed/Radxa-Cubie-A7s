@@ -10,7 +10,7 @@ Open 3D-printed bench stand for the Radxa Cubie A7S (Allwinner A733). Board and 
 
 | Part | Notes |
 |------|-------|
-| Radxa Cubie A7S | Allwinner A733 SBC (eMMC, Gigabit Ethernet, USB, WiFi) |
+| Radxa Cubie A7S | Allwinner A733 SBC (microSD, eMMC footprint, Gigabit Ethernet, USB, WiFi) |
 | M.2 NVMe SSD | Waveshare PCIe-to-M.2 adapter (has driver support). SK hynix module shown |
 | PCIe link | Board connector J3, PCIe 3.0 x1 over an FPC ribbon (FPC_2X8P). Only 5 V is on the connector, the NVMe module generates its own rails |
 | Fan | 40x10 mm (Noctua NF-A4x10 5V shown) in the rear fan holder |

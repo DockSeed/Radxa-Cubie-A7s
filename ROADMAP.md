@@ -7,13 +7,13 @@ The software moved to [a7s-build](https://github.com/DockSeed/a7s-build): one
 `./build.sh` builds a Debian 13 image for the board from source (boot chain,
 kernel, root filesystem, optional Xfce desktop). It pins two recipes of their
 own: [a7s-linux-lts](https://github.com/DockSeed/a7s-linux-lts) (Linux 6.18 LTS
-with the A733 patch series; releases as Debian packages, without the AIC8800
-WLAN/BT driver, which the image builds) and [a733-bootchain](https://github.com/DockSeed/a733-bootchain)
+with the A733 patch series; releases as Debian packages, including the AIC8800
+WLAN/BT driver as a DKMS package; the image fetches the firmware) and [a733-bootchain](https://github.com/DockSeed/a733-bootchain)
 (U-Boot SPL, TF-A BL31, U-Boot). What the image offers and where help is
 wanted is kept there:
 [how-we-built-it.md](https://github.com/DockSeed/a7s-build/blob/main/docs/how-we-built-it.md#what-the-image-offers)
 and [help-wanted.md](https://github.com/DockSeed/a7s-build/blob/main/docs/help-wanted.md).
-The A733 patches on mainline Linux 7.3 (kernel only, no releases) are in
+The A733 patches on mainline Linux 7.3 (kernel only) are in
 [a7s-linux-mainline](https://github.com/DockSeed/a7s-linux-mainline).
 
 Legend: [done] [parked] [help wanted]

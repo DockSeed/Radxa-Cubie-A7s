@@ -106,7 +106,6 @@ evidence. **Markings are read verbatim**, not filled in from datasheets.
 
 **SoC + 26 MHz crystal** - `ALLWINNER A733 MX-HN3`. The crystal to its left legibly reads **`26.000 MHz`**;
 this confirms the schematic (X1) **and** the CK-SEL strap ("SOC=26M") independently.
-The earlier inventory note "24.000 MHz" was a misread.
 
 ![Close-up of the board: a large black BGA package in the center, laser-marked with the Allwinner logo, below it "A733", "MX-HN3" and the batch number "R5165BA 27WF2X". To its left, on green PCB, a gold-framed SMD crystal clearly reading "26.000 MHz", next to it a smaller crystal marked "1432A". Around it traces, vias, and decoupling capacitors; at the bottom edge an FPC connector, top-left a gold-plated mounting hole.](img/soc-a733.jpg)
 
@@ -405,7 +404,7 @@ USB-C J16 (5 V, sink) --> U12 SGM40666AS (4.5 A, OVLO) --> VCC5V0_SYS
 | **DCDC7** | **VCC-DRAM** = DRAM **PHY** (SoC) + **VDD2H** (DRAM die) | 1.1 / **1.05 V** | **S** + **T** | LP7 1 uH **4.7 A** | - | no |
 | **DCDC8** | VCC-UFS-IO | **1.2 V** | **T** (strap DC8SET: RP55=1 K, RP57=NC) | LP8 1 uH **4.7 A** | unused | unused |
 | **DCDC9** | **ELDO-INPUT** (pre-regulator) | *1.24 V* | **K** - **the only remaining kernel gap.** Neither schematic nor A733 DS gives a value (ELDO-INPUT is **not a SoC pin**). Only derivable: **> 0.9 V** (must feed ELDO1). | LP9 1 uH **4.7 A** | - | no |
-| (ETA3521) | `LDO2V5` -> BLDO/CLDO groups | **2.5 V** | **N** (net name `LDO2V5`). An earlier calc of "2.4 V from the FB divider" assumed **V_fb = 0.6 V** - and there is **no ETA3521 datasheet**. The net name carries; the calc does not. | LP16 1 uH **2.3 A** | - | no |
+| (ETA3521) | `LDO2V5` -> BLDO/CLDO groups | **2.5 V** | **N** (net name `LDO2V5`). A "2.4 V from the FB divider" calculation would assume **V_fb = 0.6 V**, and there is **no ETA3521 datasheet**. The net name carries; a calculation does not. | LP16 1 uH **2.3 A** | - | no |
 | SWOUT1 (<-DCDC1) | `VCC33-LCD` -> also Ethernet PHY | 3.3 V | **N** | - | IMAX **1 A** (S) | - |
 | SWOUT2 (<-DCDC1) | `VCC-CARD`, `VCC-eMMC`, `VCC-PH`, `VCC-IO`, `VCC33-USB-2` | 3.3 V | **N** | - | - | - |
 | ALDO1 | `VCC-PL`, `VCC33-USB`, `VCC_3V3_TYPEC`, EEPROM | 3.3 V | **N** + **D** (Table 5-2: `VCC33-USB` = 3.3 V) | - | IMAX 0.6 A (S) | - |
@@ -703,7 +702,7 @@ the NVMe module makes its own voltages.
 
 **J5 - camera (`CAM_31P`):** MIPI-CSI **4 lanes + clock** (MCSIB), MCLK (PE5), **TWI3**, **RESET = `MCSI-RST-R` -> ball 1A3 = PE9**,
 **STBY = `MCSI-STBY-R` -> ball A2 = PE8**, supply **3.3 V and 5 V**. Second clock / CAM1 / PDN1 unused.
-*(Correction: an earlier revision said STBY=PE9/RESET=PE10 - off by one; PE10 (ball 1A1) carries no camera net, unused.)*
+PE10 (ball 1A1) carries no camera net, unused.
 
 **J7 - fan (`CONM_1X3`):** GND, **PWM (PJ27)**, **5 V**. **No tach pin.**
 
@@ -711,8 +710,7 @@ the NVMe module makes its own voltages.
 
 ### 7.4 USB - the two Type-C ports have **different** roles
 
-> **Board-measured (kernel 6.18.36).** The earlier claim "no USB3 / all ports USB 2.0" (Sec. 2.2 + box below)
-> was **wrong**. Measured:
+> **Board-measured (kernel 6.18.36).**
 > - **J4 (USB-C)** delivers **USB 3.2 Gen2, 10 Gbps** - a Kingston DT Max enumerates as `usb 2-1: SuperSpeed Plus Gen 2x1`,
 > `10000M`, driver `uas`, mountable as `sda`. The `phy_switcher@10` switches `STATE_SAFE -> STATE_USB`.
 > -> The **single** USB3.1 controller rides on **COMB0** (not COMB1), muxed with DP-Alt via HUSB311.
@@ -764,11 +762,50 @@ The schematic provides for the chip and does **not** mark it DNP. But:
   whether populated or not.
 
 **Resolve by:** visual inspection/photo of the board **or** DT fix + boot attempt.
-Do **not** infer "not populated" from "does not appear" - exactly that fallacy was in the old docs.
+Do **not** infer "not populated" from "does not appear".
 
-### 7.9 IRQ-to-pin mapping (Przywara's open doubt - checked)
+### 7.7 Ethernet PHY
 
-Przywara in the RFC: *"I am not 100% convinced the IRQ number to pin mapping ... works correctly."*
+- PHY **MAE0621A-Q3C** with **own 25 MHz crystal**; RGMII on bank **PH**; **I/O voltage 3.3 V**
+  (VCCIO_PHY <- SWOUT1; SoC bank PH <- SWOUT2 - both sides 3.3 V, consistent).
+- The PHY generates its own 1.0 V (`PHY_REG_OUT` -> L11 2.2 uH).
+- **RGMII delay / PHYAD straps** (R115-R125): derived from the drawing: PHYAD = 1/0/0,
+  **RXDLY = pull-up, TXDLY = pull-down**. **Not verified against the MAE0621A datasheet** -
+  cross-check on the board before changing a delay in the driver.
+
+### 7.8 GPIO banks: **IP size vs. bonded** - and a diff against mainline
+
+Comparing the pin truth against **Andre Przywara's** mainline pinctrl driver
+(`a733-rfc`, RFC Aug 2025) surfaced an apparent contradiction - which turned out to be an imprecision on our side:
+
+| Bank | **GPIO IP** (live BSP driver + mainline) | **bonded** (DS + pinout V0.91) | Delta |
+|---|---|---|---|
+| PA | 0 | 0 | - |
+| PB PC PD PE PF PG PK | 11 17 24 16 7 15 26 | identical | - |
+| **PH** | **20** (PH0-19) | **17** (PH0-16) | +3 IP-only |
+| **PI** | **17** (PI0-16) | **0** | **+17 = whole bank IP-only** |
+| **PJ** | **28** (PJ0-27) | **6** (PJ22-27) | +22 IP-only |
+
+**Triple-confirmed** (3 independent sources, same numbers):
+1. The **mainline** driver `pinctrl-sun60i-a733.c`: `{0,11,17,24,16,7,15,20,17,28,26}`
+2. **Vendor BSP** driver, read **live on the board** (`/sys/kernel/debug/pinctrl/2000000.pinctrl/pins`): PH=20, PI=17, PJ=28
+3. Our DS/pinout extraction (the bonded numbers).
+
+> **Resolution:** the GPIO **IP** has **181 pins** in the **main domain** (PB-PK) (incl. **bank PI**, larger PH/PJ);
+> of those **139 are bonded**. Plus the **CPUS domain** PL(14)+PM(6) = 20 -> **159 bonded total** (the value in Sec. 2.1).
+> On the **package** only the bonded pins appear in datasheet + pinout; the IP-only pins (PI entirely, PH17-19, PJ0-21) do not.
+> - "There is no bank PI" holds at the **bonding** level, not at the **IP** level:
+> **bank PI exists in silicon (17 pins) but is not brought out on the A733 package** ->
+> **not usable** on this board, but it *exists*.
+> - `PH17/18/19` and `PJ0-21` are likewise **IP-only, unbonded** -> not on the board.
+>
+> **The mainline bank sizes are correct** - they describe the IP (as a pinctrl driver must) and **match the
+> vendor BSP exactly, verified live on the board.** The RFC uncertainty ("not 100% convinced the IRQ number
+> to pin mapping works") concerns the **IRQ mapping**, not the bank sizes - those are right.
+
+### 7.9 IRQ-to-pin mapping (open question upstream - checked)
+
+The mainline RFC (`a733-rfc`) states: *"I am not 100% convinced the IRQ number to pin mapping ... works correctly."*
 Checked against the **ground truth**: the per-pin table of the **vendor BSP driver** (`pinctrl-sun60iw2.c`,
 `SUNXI_FUNCTION_IRQ_BANK(mux, irq_bank, eint)`), which **runs on the real board**.
 
@@ -781,50 +818,11 @@ Checked against the **ground truth**: the per-pin table of the **vendor BSP driv
 | **EINT mux** | = **`0xE` (Func14)** for all EINT-capable pins |
 | **Exceptions** | **0 of 181** EINT-capable pins of the IP (`num != pin` nowhere) |
 
-> **For Przywara:** his `.irq_banks = 10` and `irq_bank_muxes = {0,14,...}` match the vendor BSP exactly.
+> **Result for the mainline driver:** `.irq_banks = 10` and `irq_bank_muxes = {0,14,...}` match the vendor BSP exactly.
 > The **logical** mapping (bank=port index, eint=pin number) is **trivially regular, without exception** -
 > any formula-based approach reproduces it correctly as long as it assumes `eint == pin`. **The remaining
 > risk is NOT in the mapping but in the register *location*** (in the new A733 layout the IRQ registers moved
-> into the per-bank control block). The *number* question he raises is cleared.
-
-### 7.8 GPIO banks: **IP size vs. bonded** - and a diff against mainline
-
-Comparing the pin truth against **Andre Przywara's mainline pinctrl driver** (`a733-rfc`, RFC Aug 2025)
-surfaced an apparent contradiction - which turned out to be an imprecision on our side:
-
-| Bank | **GPIO IP** (live BSP driver + mainline) | **bonded** (DS + pinout V0.91) | Delta |
-|---|---|---|---|
-| PA | 0 | 0 | - |
-| PB PC PD PE PF PG PK | 11 17 24 16 7 15 26 | identical | - |
-| **PH** | **20** (PH0-19) | **17** (PH0-16) | +3 IP-only |
-| **PI** | **17** (PI0-16) | **0** | **+17 = whole bank IP-only** |
-| **PJ** | **28** (PJ0-27) | **6** (PJ22-27) | +22 IP-only |
-
-**Triple-confirmed** (3 independent sources, same numbers):
-1. Przywara's **mainline** driver `pinctrl-sun60i-a733.c`: `{0,11,17,24,16,7,15,20,17,28,26}`
-2. **Vendor BSP** driver, read **live on the board** (`/sys/kernel/debug/pinctrl/2000000.pinctrl/pins`): PH=20, PI=17, PJ=28
-3. Our DS/pinout extraction (the bonded numbers).
-
-> **Resolution:** the GPIO **IP** has **181 pins** in the **main domain** (PB-PK) (incl. **bank PI**, larger PH/PJ);
-> of those **139 are bonded**. Plus the **CPUS domain** PL(14)+PM(6) = 20 -> **159 bonded total** (the value in Sec. 2.1).
-> On the **package** only the bonded pins appear in datasheet + pinout; the IP-only pins (PI entirely, PH17-19, PJ0-21) do not.
-> - The earlier statement *"there is no bank PI"* was right at the **bonding** level, wrong at the **IP** level.
-> Correct: **bank PI exists in silicon (17 pins) but is not brought out on the A733 package** ->
-> **not usable** on this board, but it *exists*.
-> - `PH17/18/19` and `PJ0-21` are likewise **IP-only, unbonded** -> not on the board.
->
-> **Przywara's bank sizes are correct** - they describe the IP (as a pinctrl driver must) and **match the
-> vendor BSP exactly, verified live on the board.** His RFC uncertainty ("not 100% convinced the IRQ number
-> to pin mapping works") concerns the **IRQ mapping**, not the bank sizes - those are right.
-
-### 7.7 Ethernet PHY
-
-- PHY **MAE0621A-Q3C** with **own 25 MHz crystal**; RGMII on bank **PH**; **I/O voltage 3.3 V**
-  (VCCIO_PHY <- SWOUT1; SoC bank PH <- SWOUT2 - both sides 3.3 V, consistent).
-- The PHY generates its own 1.0 V (`PHY_REG_OUT` -> L11 2.2 uH).
-- **RGMII delay / PHYAD straps** (R115-R125): derived from the drawing: PHYAD = 1/0/0,
-  **RXDLY = pull-up, TXDLY = pull-down**. **Not verified against the MAE0621A datasheet** -
-  cross-check on the board before changing a delay in the driver.
+> into the per-bank control block). The *number* question raised in the RFC is cleared.
 
 ---
 
@@ -837,17 +835,16 @@ surfaced an apparent contradiction - which turned out to be an imprecision on ou
 > ```
 > VCC-PD / VCC-LVDS0 / VCC-PJ / VCC18-LCD EXT DCDC-> BLDO2(0.5A) -> 3.3 V
 > ```
-> **The 3.3 V is not a Radxa error, not an OTP accident, not a broken blob.** It is **Allwinner's
-> documented reference configuration**, which Radxa copied **exactly** - including the misleading net
-> name `VCC18-LCD`, which actually carries 3.3 V.
+> This 3.3 V is **Allwinner's documented reference configuration**; the Radxa schematic uses the same,
+> including the net name `VCC18-LCD`, which carries 3.3 V.
 
 **The node really sits at 3.3 V - backed two ways:**
 1. **BLDO2 OTP register** `0x2B` = `0x1C` = **3300 mV** (read raw, bypassing the driver - no decode bug, BLDO uses *one* linear range). **ON** (enable `0x20` bit 7).
 2. **R251 is fitted** (placement map, Sec. 8.1b) -> the node also hangs hard on **SWOUT1 = real 3.3 V** (load switch from DCDC1, *not* an LDO). Both sources = 3.3 V.
 
--> **`VCC-LVDS` (ball 1N6) therefore really sees 3.3 V** - not ~2.4 V. An earlier relief ("the LDO caps at 2.4 V") was **wrong**: it held only for the case *R251 unfitted*, which is not the case here. The node is genuine 3.3 V.
+-> **`VCC-LVDS` (ball 1N6) therefore really sees 3.3 V** - not ~2.4 V. ("The LDO caps at 2.4 V" would hold only with *R251 unfitted*, which is not the case here.) The node is genuine 3.3 V.
 
-**The contradiction is internal to Allwinner:**
+**The Allwinner documents disagree:**
 
 | Allwinner source | `VCC-LVDS` |
 |---|---|
@@ -855,12 +852,12 @@ surfaced an apparent contradiction - which turned out to be an imprecision on ou
 | Datasheet Table 5-1 (abs-max) | **2.1 V** |
 | **STD reference schematic** p.4 | **3.3 V** (BLDO2) |
 
-Allwinner drives, in their **own** reference design, a pin at 3.3 V that their **own** datasheet rates at 2.1 V abs-max. **Their** contradiction, not ours.
+The Allwinner reference design drives a pin at 3.3 V that the Allwinner datasheet rates at 2.1 V abs-max.
 
 > **Why it does not bite on the A7S** (despite real 3.3 V on a 2.1 V pin):
 > 1. **LVDS is not routed** (Sec. 2.2) - an unused, unpowered input.
-> 2. It is **Allwinner's documented reference configuration** (p.4), not an oversight - Radxa copied it 1:1.
-> 3. **Millions of A733 run this way** -> the 2.1 V row is apparently conservative, or applies only to *active* LVDS operation (1.8 V signaling).
+> 2. It is **Allwinner's documented reference configuration** (p.4), not an
+>    oversight - the Radxa schematic uses the same configuration.
 >
 > **Do NOTHING.** Do not measure (the source is unambiguously SWOUT1), do not reprogram in the DT:
 > setting BLDO2 to 1.8 V in the DT is **ineffective** - SWOUT1 holds the node at 3.3 V via the fitted R251,
@@ -940,7 +937,7 @@ In a document whose purpose is the mapping, this cannot stand unresolved:
 > not one millivolt. Practically harmless, because **no UFS is fitted**. Noted here so nobody later thinks
 > *"there is headroom"*.
 
-### 8.3 CLARIFIED - `vdd_sys` is a DT fiction, not hardware
+### 8.3 CLARIFIED - `vdd_sys` is a DT placeholder, not hardware
 
 From the **DTS source** (not the board):
 ```
@@ -954,17 +951,16 @@ sun60i-a733-cubie-a7s.dts:1460 npu-supply = <&reg_dcdc2>;
 - The **real** VDD-SYS rail is **DCDC2** (adjustable, with remote sense `VDD-SYSFB`, schematic p.4/p.8).
 - The DT declares DCDC2 only as **`npu-supply`** - although per schematic DCDC2 feeds **VDD-SYS, VDD-DRAM,
   VDD-VE, VDD-COMB0/1, VDD08-HDMI/UFS**, far more than the NPU.
-- **-> a DT bug, not a hardware puzzle.** For a family kernel: model DCDC2 correctly as a system rail,
-  do not treat the fictional `vdd_sys` as a real voltage source.
+- **->** Model DCDC2 as a system rail; do not treat the placeholder `vdd_sys`
+  as a real voltage source.
 
-### 8.4 Formerly open minor points - both resolved
+### 8.4 Minor points - both resolved
 
 - **Bank PF is DUAL, not 1.8 V only.** The datasheet pin table lists `io_supply = VCC18-PF/VCC-IO` for
   **all** Port-F pins (compare Port B: only `VCC-IO`). Datasheet and schematic (two supply pins 1U5/1U6)
   thus agree -> **3.3 V and 1.8 V**, as needed for SD level switching.
-  The earlier claim "PF = 1.8 V only" was an error in the DS extract.
 - **The crystal is 26 MHz.** On the board photo the crystal next to the SoC legibly reads
-  **`26.000 MHz`**. The "24.000 MHz" note in the old inventory was a misread.
+  **`26.000 MHz`**.
   Schematic (X1 = 26 MHz), CK-SEL strap (SEL1=1/SEL0=0 -> "SOC=26M") and photo all **agree**.
 
 ### 8.5 DS-internal contradictions (not smoothed over)
